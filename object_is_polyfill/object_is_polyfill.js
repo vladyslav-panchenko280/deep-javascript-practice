@@ -5,10 +5,19 @@ const isActive = true; // set to `true` to activate the polyfill, or `false` to 
 if (!Object.is || isActive) {
 	Object.is = function ObjectIs(value1, value2) { 
         const isNegativeZero = (value) => typeof value === "number" && (1 / value) === -Infinity;
-        if (isNegativeZero(value1) || isNegativeZero(value2)) {
-            return isNegativeZero(value1) && isNegativeZero(value2);
+
+        const isItNaN = (value) => value !== value;
+
+        const val1IsNegZero = isNegativeZero(value1);
+        const val2IsNegZero = isNegativeZero(value2);
+
+        if (val1IsNegZero || val2IsNegZero) {
+            return val1IsNegZero && val2IsNegZero;
+        } else if (isItNaN(value1) && isItNaN(value2)) {
+            return true
+        } else {
+            return value1 === value2;
         }
-        return (value1 === value2) || (value1 !== value1 && value2 !== value2) ;
     };
 }
 
